@@ -1,23 +1,69 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import GeneralEntries from './components/GeneralEntries';
+import './App.css'
+import { useEffect, useState } from "react";
+import LoadingModal from './components/Modals/LoadingModal';
+import AddGeneralEntry from "./components/Modals/AddGeneralEntry";
+import axios from "axios";
 
 function App() {
+  const [loading, setLoading] = useState(false);
+  const [addingGE, setAddingGE] = useState(false);
+  const [generalJournal, setGeneralJournal] = useState([]);
+  const [accounts, setAccounts] = useState([]);
+  const [tAccounts, setTAccounts] = useState([]);
+
+  // const getAllTAccounts = async () => {
+  //   try {
+  //     const res = await axios.get(`http://localhost:5000/Ledger/`);
+  //     console.log(res.data.data);
+  //     return res.data.data
+  //   } catch (err) {
+  //     console.log(err)
+  //   }
+  // }
+
+  // useEffect(()=>{
+  //   setTAccounts(getAllTAccounts())
+  // })
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            exact
+            path="/GeneralEntries"
+            element={
+              <GeneralEntries
+                setAddingGE={setAddingGE}
+                generalJournal={generalJournal}
+                setGeneralJournal={setGeneralJournal}
+                accounts={accounts}
+                setAccounts={setAccounts}
+              />
+            }
+          />
+          <Route
+            exact
+            path="/Closing"
+            element={<></>} />
+          <Route path="/" element={<Navigate to="/GeneralEntries" />} />
+        </Routes>
+      </BrowserRouter>
+      {loading ? <LoadingModal /> : null}
+      {
+        addingGE ?
+          <AddGeneralEntry
+            setGeneralJournal={setGeneralJournal}
+            setLoading={setLoading}
+            generalJournal={generalJournal}
+            setAddingGE={setAddingGE}
+            tAccounts={tAccounts}
+            setTAccounts={setTAccounts}
+          />
+          : null
+      }
     </div>
   );
 }
